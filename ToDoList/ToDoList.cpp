@@ -35,7 +35,7 @@ void reFreshMenu(bool& sortDay, int& spisok)
 {
     system("cls");
     cout << "=================================== Список задач ====================================================" << endl << endl;
-    cout << "1 - Добавить   2 - Удалить   3 - Редактировать   4 - Поиск";
+    cout << "1 - Добавить   2 - Удалить   3 - Редактировать   ";
     if (sortDay) cout << "5 - Сортировка приоритет   ";
     else cout << "5 - Сортировка день/время  ";
     if (spisok == 1) cout << "6 - Список день ";
@@ -117,14 +117,15 @@ void printList(ToDo*& list, int& size, bool& sortDay, int& spisok, int& dealNotE
 }
 
 // функция добавления задачи
-void addDeal(ToDo*& arr, int& size, int& dealNotEmpty)
+void addDeal(ToDo* arr, int& size, int& dealNotEmpty)
 {
     system("cls");
+    string sd;
     //объявляем новый динамический массив (на 1 элемент больше)
     ToDo* temp = new ToDo[size + 1];
     // переписываем старый массив в новый
     if (dealNotEmpty==1) {
-        for (size_t i = 1; i < size; i++)
+        for (size_t i = 0; i < size; i++)
         {
             temp[i] = arr[i];
         }
@@ -133,11 +134,11 @@ void addDeal(ToDo*& arr, int& size, int& dealNotEmpty)
     cout << "====== Планирование новой задачи ======" << endl;
     cout << endl;
     cout << "Введите название задачи (не более 20 символов)";
-    cin >> temp[size].title;
-    temp[size].title.erase(20);
+    getline(cin, temp[size].title);
+ //   if (temp[size].title.length > 20) temp[size].title.erase(20);
     cout << "Введите описание задачи (не более 30 символов)";
-    cin >> temp[size].description;
-    temp[size].description.erase(30);
+    getline(cin,temp[size].description);
+//    temp[size].description.erase(30);
     cout << "Введите приоритет задачи (от 1 до 10)";    
     cin >> temp[size].prioritet;
     cout << "Введите дату выполнения задачи" << endl;
