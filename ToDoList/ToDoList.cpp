@@ -4,247 +4,266 @@
 #include <iostream>
 #include <conio.h>
 #include <string>
+#include <iomanip>
 using namespace std;
 
 // объявляем структуру для хранения полей задачи
-struct date 
+struct date
 {
-    int day;
-    int month;
-    int year;
+	int day;
+	int month;
+	int year;
 };
 
 struct time
 {
-    int hour;
-    int min;
+	int hour;
+	int min;
 };
 
 struct ToDo
 {
-    string title;
-    int prioritet;
-    string prioritet_s;
-    string description;
-    struct date dte;
-    struct time tme;
+	string title;
+	int prioritet;
+	string prioritet_s;
+	string description;
+	struct date dte;
+	struct time tme;
 };
 
 // функция печати меню
 void reFreshMenu(bool& sortDay, int& spisok)
 {
-    system("cls");
-    cout << "=================================== Список задач ====================================================" << endl << endl;
-    cout << "1 - Добавить   2 - Удалить   3 - Редактировать   ";
-    if (sortDay) cout << "5 - Сортировка приоритет   ";
-    else cout << "5 - Сортировка день/время  ";
-    if (spisok == 1) cout << "6 - Список день ";
-    if (spisok == 2) cout << "6 - Список месяц";
-    if (spisok == 3) cout << "6 - Список год  ";
-    cout << "7 - Выход";
-    cout << endl;
-    cout << "=====================================================================================================";
-    cout << endl << endl;
+	system("cls");
+	cout << setw(109) << "=================================== Список задач ===========================================================" << endl;
+	cout << setw(15) << left << "1 - Добавить" << setw(15) << "2 - Удалить" << setw(15) << "3 - Редактировать   ";
+	if (sortDay) cout << setw(30) << left << "5 - Сортировка приоритет";
+	else cout << setw(30) << left << "5 - Сортировка день/время";
+	if (spisok == 1) cout << setw(19) << left << "6 - Список день ";
+	if (spisok == 2) cout << setw(19) << left << "6 - Список месяц";
+	if (spisok == 3) cout << setw(19) << left << "6 - Список год  ";
+	cout << "7 - Выход";
+	cout << endl;
+	cout << "============================================================================================================";
+	cout << endl << endl;
 }
-void printStr (ToDo*& list, int& j)
+
+char printStr(ToDo*& list, int& j)
 {
-    string str, str1;
-    str += '|';
-    str += ' ';
-    str += to_string(j);
-    for (size_t i = str.length(); i < 8; i++)
-    {
-        str += ' ';
-    }
-    str += '|';
-    str += list[j].title;
-    for (size_t i = list[j].title.length(); i < 20; i++)
-    {
-        str += ' ';
-    }
-    str += '|';
-    str += list[j].description;
-    for (size_t i = list[j].description.length(); i < 40; i++)
-    {
-        str += ' ';
-    }
-    str += '|';
-    str += ' ';
-    list[j].prioritet_s = to_string(list[j].prioritet);
-    str += list[j].prioritet_s;
-    for (size_t i = list[j].prioritet_s.length(); i < 4; i++)
-    {
-        str += ' ';
-    }
-    str += '|';
-    str += ' ';
-    str1 = to_string(list[j].dte.day);
-    str += str1;
-    str += '.';
-    str1 = to_string(list[j].dte.month);
-    str += str1;
-    str += '.';
-    str1 = to_string(list[j].dte.year);
-    str += str1;
-    str += ' ';
-    str += '|';
-    str += ' ';
-    str1 = to_string(list[j].tme.hour);
-    str += str1;
-    str += ':';
-    str1 = to_string(list[j].tme.min);
-    str += str1;
-    cout << str << endl;
-    str.clear();
+	int t = j + 1;
+	system("cls");
+	cout << "======================================== Редактирование =====================================================" << endl;
+	cout << endl;
+	// формируем шапку задач
+	cout << "=============================================================================================================" << endl;
+	cout << "|# п/п  | Название           | Описание                                      |  П  | Дата      | Время      |" << endl;
+	cout << "=============================================================================================================" << endl;
+	// собираем строку для вывода задачи
+		cout << "|" << left << setw(7) << t;
+		cout << "|" << left << setw(20) << list[j].title << "|" << setw(47) << list[j].description;
+		cout << "|" << setw(5) << list[j].prioritet << "|" << setw(2) << list[j].dte.day << "." << setw(2) << right << list[j].dte.month << ".";
+		cout << left << setw(5) << list[j].dte.year << "|" << setw(2) << list[j].tme.hour << ":" << list[j].tme.min;
+		cout << endl << "------------------------------------------------------------------------------------------------------------" << endl;
+		cout << "Введите поле редактирования " << endl;
+		cout << "1 - Название" << endl;
+		cout << "2 - Описание" << endl;
+		cout << "3 - Приоритет" << endl;
+		cout << "4 - Дата" << endl;
+		cout << "5 - Время" << endl;
+		cout << "6 - Выход" << endl;
+		char key = _getch();
+		return key;
 }
 
 // функция печати списка задач
-void printList(ToDo*& list, int& size, bool& sortDay, int& spisok, int& dealNotEmpty)
+void printList(ToDo*& list, int& size, bool& sortDay, int& spisok, int& dealEmpty)
 {
-    // формируем шапку задач
-    cout << "=====================================================================================================" << endl;
-    cout << "|# п/п  | Название           | Описание                               |  П  | Дата      | Время      |" << endl;
-    cout << "=====================================================================================================" << endl;
-    int j = 1;
-    // собираем строку для вывода задачи
-    while ((j < size) && (dealNotEmpty==1)) 
-    {
-        printStr(list, j);
-        cout << "-----------------------------------------------------------------------------------------------------" << endl;
-        j++;
-    }
-
+	// формируем шапку задач
+	cout << "=============================================================================================================" << endl;
+	cout << "|# п/п  | Название           | Описание                                      |  П  | Дата      | Время      |" << endl;
+	cout << "=============================================================================================================" << endl;
+	int j = 0;
+	// собираем строку для вывода задачи
+	while ((j < size) && (dealEmpty == 0))
+	{
+		int t = j + 1;
+		cout << "|" << left << setw(7) << t;
+		cout << "|" << left << setw(20) << list[j].title << "|" << setw(47) << list[j].description;
+		cout << "|" << setw(5) << list[j].prioritet << "|" << setw(2) <<list[j].dte.day << "." << setw(2) << right << list[j].dte.month << ".";
+		cout << left << setw(5) << list[j].dte.year << "|" << setw(2) << list[j].tme.hour << ":" << list[j].tme.min;
+        cout << endl << "------------------------------------------------------------------------------------------------------------" << endl;
+ j++;
+	}
 }
 
 // функция добавления задачи
-void addDeal(ToDo* arr, int& size, int& dealNotEmpty)
+void addDeal(ToDo*& arr, int& size, int& dealEmpty)
 {
-    system("cls");
-    string sd;
-    //объявляем новый динамический массив (на 1 элемент больше)
-    ToDo* temp = new ToDo[size + 1];
-    // переписываем старый массив в новый
-    if (dealNotEmpty==1) {
-        for (size_t i = 0; i < size; i++)
-        {
-            temp[i] = arr[i];
-        }
-    }
-    // и добавляем новый элемент
-    cout << "====== Планирование новой задачи ======" << endl;
-    cout << endl;
-    cout << "Введите название задачи (не более 20 символов)";
-    getline(cin, temp[size].title);
- //   if (temp[size].title.length > 20) temp[size].title.erase(20);
-    cout << "Введите описание задачи (не более 30 символов)";
-    getline(cin,temp[size].description);
-//    temp[size].description.erase(30);
-    cout << "Введите приоритет задачи (от 1 до 10)";    
-    cin >> temp[size].prioritet;
-    cout << "Введите дату выполнения задачи" << endl;
-    cout << "Введите день ";
-    cin >> temp[size].dte.day;
-    cout << "Введите месяц ";
-    cin >> temp[size].dte.month;
-    cout << "Введите год ";
-    cin >> temp[size].dte.year;
-    cout << "Введите время выполнения задачи" << endl;
-    cout << "Введите часы ";
-    cin >> temp[size].tme.hour;
-    cout << "Введите минуты ";
-    cin >> temp[size].tme.min;
-    // удаляем старый массив
-    delete[] arr;
-    arr = temp;
-    size++;
-    dealNotEmpty = 1;
+	system("cls");
+	int count = size;
+	int s = size;
+	if (dealEmpty == 0) count++;
+	else s--;
+	//объявляем новый динамический массив (на 1 элемент больше)
+	ToDo* temp = new ToDo[count];
+	// переписываем старый массив в новый
+	if (dealEmpty == 0) {
+		for (size_t i = 0; i < size; i++)
+		{
+			temp[i] = arr[i];
+		}
+	}
+	// и добавляем новый элемент
+	cout << "====== Планирование новой задачи ======" << endl;
+	cout << endl;
+	cout << "Введите название задачи (не более 20 символов)";
+	getline(cin, temp[s].title,'\n');
+	cout << "Введите описание задачи (не более 30 символов)";
+	getline(cin, temp[s].description,'\n');
+	cout << "Введите приоритет задачи (от 1 до 10)";
+	(cin >> temp[s].prioritet).get();
+	cout << "Введите дату выполнения задачи" << endl;
+	cout << "Введите день ";
+	(cin >> temp[s].dte.day).get();
+	cout << "Введите месяц ";
+	(cin >> temp[s].dte.month).get();
+	cout << "Введите год ";
+	(cin >> temp[s].dte.year).get();
+	cout << "Введите время выполнения задачи" << endl;
+	cout << "Введите часы ";
+	(cin >> temp[s].tme.hour).get();
+	cout << "Введите минуты ";
+	(cin >> temp[s].tme.min).get();
+	// удаляем старый массив
+	delete[] arr;
+	arr = temp;
+	if (dealEmpty == 0) size++;
+	dealEmpty = 0;
 }
 
-void delDeal(ToDo*& arr, int& size, int& dealNotEmpty)
+void delDeal(ToDo*& arr, int& size, int& dealEmpty)
 {
-    if (size == 1)
-    {
-        dealNotEmpty = 0;
-        arr = {};
-        return;
-    }
-    ToDo* temp = new ToDo[size - 1];
-    int str;
-    int count = 1;
-    cout << "Введите номер строки, которую хотите удалить ";
-    cin >> str;
-    for (size_t i = 1; i < size; i++)
-    {
-        if (i == str) continue;
-        temp[count] = arr[i];
-        count++;
-    }
-    delete[]arr;
-    arr = temp;
-    size--;
+	if (size > 1)
+	{
+		ToDo* temp = new ToDo[size - 1];
+		int str;
+		int count = 0;
+		cout << "Введите номер строки, которую хотите удалить ";
+		cin >> str;
+		str--;
+		for (size_t i = 0; i < size; i++)
+		{
+			if (i == str) continue;
+			temp[count] = arr[i];
+			count++;
+		}
+		delete[]arr;
+		arr = temp;
+		size--;
+	}
+	else dealEmpty = 1;
 }
 
-void editDeal(ToDo*& arr, int& size, int& dealNotEmpty)
+void editDeal(ToDo*& arr, int& size, int& dealEmpty)
 {
-    int deal;
-    cout << "Введите номер строки, которую нужно редактировать ";
-    cin >> deal;
-    if (deal<0&&deal>size) return;
-    system("cls");
-    cout << "==================== Редактирование =====================" << endl;
-    cout << endl;
-    cout << "Введите название задачи (не более 20 символов)";
-    cin >> arr[deal].title;
-    cout << "Введите описание задачи (не более 30 символов)";
-    cin >> arr[deal].description;
-    cout << "Введите приоритет задачи (от 1 до 10)";
-    cin >> arr[deal].prioritet;
-    cout << "Введите дату выполнения задачи" << endl;
-    cout << "Введите день ";
-    cin >> arr[deal].dte.day;
-    cout << "Введите месяц ";
-    cin >> arr[deal].dte.month;
-    cout << "Введите год ";
-    cin >> arr[deal].dte.year;
-    cout << "Введите время выполнения задачи" << endl;
-    cout << "Введите часы ";
-    cin >> arr[deal].tme.hour;
-    cout << "Введите минуты ";
-    cin >> arr[deal].tme.min;
+	int deal, key;
+	if (size > 1) {
+		cout << "Введите номер строки, которую нужно редактировать ";
+		(cin >> deal).get();
+		deal--;
+		if (deal<0 && deal>size) return;
+	}
+	else deal = 0;
+	// формируем шапку задач
+	key = printStr(arr, deal);
+	switch (key)
+	{
+		case '1': 
+			cout << "Введите название задачи (не более 20 символов)";
+			getline(cin, arr[deal].title);
+			key = printStr(arr, deal);
+			break;
+		case '2':
+			cout << "Введите описание задачи (не более 30 символов)";
+			getline(cin, arr[deal].description);
+			key = printStr(arr, deal);
+			break;
+		case '3':
+			cout << "Введите приоритет задачи (от 1 до 10)";
+			(cin >> arr[deal].prioritet).get();
+			key = printStr(arr, deal);
+			break;
+		case '4':
+			cout << "Введите дату выполнения задачи" << endl;
+			cout << "Введите день ";
+			(cin >> arr[deal].dte.day).get();
+			cout << "Введите месяц ";
+			(cin >> arr[deal].dte.month).get();
+			cout << "Введите год ";
+			(cin >> arr[deal].dte.year).get();
+			key = printStr(arr, deal);
+			break;
+		case '5':
+			cout << "Введите время выполнения задачи" << endl;
+			cout << "Введите часы ";
+			(cin >> arr[deal].tme.hour).get();
+			cout << "Введите минуты ";
+			(cin >> arr[deal].tme.min).get();
+			key = printStr(arr, deal);
+			break;
+		case '6':
+			return;
+	}
+}
+void sortPrior(ToDo*& arr, int& size)
+{
+	ToDo temp;
+	for (size_t i = 0; i < size; i++)
+	{
+		for (size_t j = 0; j < size - i; j++)
+		{
+			if (arr[j].prioritet < arr[j + 1].prioritet)
+			{
+				temp = arr[j];
+				arr[j] = arr[j + 1];
+				arr[j + 1] = temp;
+			}
+		}
+	}
 }
 
 // функция работы с меню
-void mainMenu(ToDo*& list, int& size, bool& sortDay, int& spisok, int& dealNotEmpty)
+void mainMenu(ToDo*& list, int& size, bool& sortDay, int& spisok, int& dealEmpty)
 {
-    // выводим  меню
-    reFreshMenu(sortDay, spisok);
-    // выводим список задач
-    if (dealNotEmpty==1) printList(list, size, sortDay, spisok, dealNotEmpty);
-    // опрос клавиатуры
-    char key = _getch();
-    switch (key)
-    {
-    case '1':
-        addDeal(list,size, dealNotEmpty);
-        mainMenu(list, size, sortDay, spisok, dealNotEmpty);
-        break;
-    case '2':
-        if (dealNotEmpty == 1)
-        {
-            delDeal(list, size, dealNotEmpty);
-        }
-            mainMenu(list, size, sortDay, spisok, dealNotEmpty);
-        break;
-    case '3':
-        if (dealNotEmpty == 1)
-        {
-            editDeal(list, size, dealNotEmpty);
-        }
-            mainMenu(list, size, sortDay, spisok, dealNotEmpty);
-        break;
-    case '7':
-        exit;
-    }
+	// выводим  меню
+	reFreshMenu(sortDay, spisok);
+	// выводим список задач
+	if (dealEmpty == 0) printList(list, size, sortDay, spisok, dealEmpty);
+	// опрос клавиатуры
+	char key = _getch();
+	switch (key)
+	{
+	case '1':
+		addDeal(list, size, dealEmpty);
+		mainMenu(list, size, sortDay, spisok, dealEmpty);
+		break;
+	case '2':
+		if (dealEmpty == 0)
+		{
+			delDeal(list, size, dealEmpty);
+		}
+		mainMenu(list, size, sortDay, spisok, dealEmpty);
+		break;
+	case '3':
+		if (dealEmpty == 0)
+		{
+			editDeal(list, size, dealEmpty);
+		}
+		mainMenu(list, size, sortDay, spisok, dealEmpty);
+		break;
+	case '7':
+		exit;
+	}
 }
 
 //void findDeal()
@@ -268,17 +287,17 @@ void mainMenu(ToDo*& list, int& size, bool& sortDay, int& spisok, int& dealNotEm
 
 int main()
 {
-    // русифицируем консоль
-    system("chcp 1251>null");
-    // первоначальный размер массива структур
-    int size = 1;
-    // начальные значения сортировки
-    bool sortDay = true;
-    int spisok = 1;
-    int dealNotEmpty = 0;
-    // объявляем массив структур
-    ToDo* list = new ToDo[size];
-    mainMenu(list, size, sortDay, spisok, dealNotEmpty);
+	// русифицируем консоль
+	system("chcp 1251>null");
+	// первоначальный размер массива структур
+	int size = 1;
+	// начальные значения сортировки
+	bool sortDay = true;
+	int spisok = 1;
+	int dealEmpty = 1;
+	// объявляем массив структур
+	ToDo* list = new ToDo[size];
+	mainMenu(list, size, sortDay, spisok, dealEmpty);
 
 
 }
